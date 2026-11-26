@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Family Day SASera</title>
+<meta name="description" content="Dashboard Family Day SASera 2026: peserta, senarai bas, Pink Tour, van, Hi Tea dan bayaran.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap">
+<style>
+/* Layout: teal lagoon hero → figures → list progress → payments → teacher cards; one column on phones */
+:root{
+  --bg:#f3f8f7; --panel:#ffffff; --ink:#0f2a28; --muted:#55706d; --line:#d6e6e3;
+  --teal:#0f766e; --teal-2:#14b8a6; --teal-soft:#e0f4f1; --pink:#db2777; --pink-soft:#fde7f1;
+  --ok:#15803d; --ok-soft:#e3f5e9; --bad:#c2410c; --bad-soft:#fdeee5; --warn:#a16207; --warn-soft:#fdf4dc;
+  --hero-a:#0b5f58; --hero-b:#0f8a80; --hero-c:#22c3b2;
+  --shadow:0 1px 2px rgba(15,42,40,.06),0 6px 18px rgba(15,42,40,.06);
+  --f-body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-num:"Fraunces",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b1716; --panel:#11211f; --ink:#e3f1ef; --muted:#9ab5b1; --line:#22403c;
+  --teal:#2dd4bf; --teal-2:#5eead4; --teal-soft:#123532; --pink:#f472b6; --pink-soft:#3a1a2b;
+  --ok:#4ade80; --ok-soft:#12301d; --bad:#fb923c; --bad-soft:#3a2214; --warn:#facc15; --warn-soft:#332a0e;
+  --hero-a:#073c38; --hero-b:#0b5f58; --hero-c:#0f8a80; --shadow:none; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1716; --panel:#11211f; --ink:#e3f1ef; --muted:#9ab5b1; --line:#22403c;
+  --teal:#2dd4bf; --teal-2:#5eead4; --teal-soft:#123532; --pink:#f472b6; --pink-soft:#3a1a2b;
+  --ok:#4ade80; --ok-soft:#12301d; --bad:#fb923c; --bad-soft:#3a2214; --warn:#facc15; --warn-soft:#332a0e;
+  --hero-a:#073c38; --hero-b:#0b5f58; --hero-c:#0f8a80; --shadow:none; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}html{-webkit-text-size-adjust:100%}body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px;display:flex;flex-direction:column;gap:28px}
+.hero{margin-top:calc(-1 * env(safe-area-inset-top,0px));padding-top:calc(env(safe-area-inset-top,0px) + 28px);padding-bottom:28px;background:linear-gradient(135deg,var(--hero-a),var(--hero-b) 55%,var(--hero-c));color:#fff;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:auto -10% -60px -10%;height:120px;background:radial-gradient(60% 100% at 50% 0,rgba(255,255,255,.18),transparent 70%)}
+.hero-in{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:10px;position:relative;z-index:1}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.85;font-weight:600}
+h1{margin:0;font-family:var(--f-num);font-weight:600;font-size:clamp(28px,6vw,44px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;max-width:62ch;opacity:.95}
+.lede b{font-weight:700}
+.hero-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:6px;font-size:13px}
+.btn{font:inherit;font-weight:600;border-radius:999px;padding:8px 14px;cursor:pointer;border:1px solid transparent}
+.btn-glass{background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.35)}
+.btn-glass:hover{background:rgba(255,255,255,.26)}
+.btn:focus-visible,.chip:focus-visible,.card:focus-visible,.lcard:focus-visible{outline:3px solid var(--teal-2);outline-offset:2px}
+.stamp{opacity:.85}
+.notice{background:var(--warn-soft);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.notice b{color:var(--warn)}
+h2{margin:0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);font-weight:700}
+.sec{display:flex;flex-direction:column;gap:12px}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.hint{margin:0;color:var(--muted);font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-top:-44px;position:relative;z-index:2}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:520px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow);min-width:0;display:flex;flex-direction:column;gap:2px}
+.kpi span{font-size:12px;color:var(--muted);font-weight:500}
+.kpi strong{font-family:var(--f-num);font-weight:600;font-size:28px;font-variant-numeric:tabular-nums;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi.money strong{font-size:21px}
+.kpi.hl{background:var(--teal-soft);border-color:transparent}
+.kpi.hl strong{color:var(--teal)}
+.kpi.due strong{color:var(--bad)}
+.lists{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+@media (max-width:900px){.lists{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.lcard{all:unset;box-sizing:border-box;cursor:pointer;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.lcard:hover{border-color:var(--teal-2)}
+.lcard[aria-pressed="true"]{border-color:var(--teal);box-shadow:inset 0 0 0 1px var(--teal)}
+.lcard .ln{font-weight:700;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.lcard .lv{font-family:var(--f-num);font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.lcard .lv small{font-family:var(--f-body);font-size:13px;color:var(--muted);font-weight:500}
+.track{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.fill{height:100%;border-radius:99px;background:var(--c,var(--teal));width:0;transition:width .5s ease}
+.lcard .lfoot{font-size:12px;color:var(--muted)}
+.pay{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:14px}
+@media (max-width:820px){.pay{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+.statrow{display:flex;flex-direction:column;gap:10px}
+.sbar{display:flex;height:14px;border-radius:99px;overflow:hidden;background:var(--line)}
+.sbar i{display:block;height:100%}
+.legend{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;font-size:14px}
+.legend .n{font-variant-numeric:tabular-nums;font-weight:700}
+.moneyline{display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:10px;font-size:14px}
+.moneyline b{font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;font-weight:600;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.tablewrap{overflow-x:auto;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td.r,th.r{text-align:right;white-space:nowrap}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--teal-soft)}
+.pill{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.p-lunas{background:var(--ok-soft);color:var(--ok)}
+.p-belum{background:var(--bad-soft);color:var(--bad)}
+.p-pulang{background:var(--warn-soft);color:var(--warn)}
+.p-tiada{background:var(--teal-soft);color:var(--teal)}
+.p-tidak{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.search{flex:1 1 240px;min-width:0;font:inherit;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.search:focus{outline:3px solid var(--teal-2);outline-offset:1px}
+.count{margin:0;font-size:13px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.card{all:unset;box-sizing:border-box;cursor:pointer;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card:hover{border-color:var(--teal-2)}
+.card.off{opacity:.6}
+.ctop{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.cnum{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.cname{font-weight:700;line-height:1.3;overflow-wrap:anywhere}
+.cmeta{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--muted);align-items:center}
+.room{background:var(--teal-soft);color:var(--teal);font-weight:700;border-radius:6px;padding:1px 7px}
+.marks{display:flex;flex-wrap:wrap;gap:4px}
+.mk{font-size:11px;font-weight:700;border-radius:6px;padding:2px 6px;border:1px solid var(--line);color:var(--muted)}
+.mk.on{border-color:transparent;background:var(--mc-soft,var(--teal-soft));color:var(--mc,var(--teal))}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px;padding:28px}
+dialog{border:none;border-radius:20px;padding:0;width:min(600px,calc(100vw - 24px));max-height:calc(100vh - 32px);background:var(--bg);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(4,30,28,.5)}
+.dlg{display:flex;flex-direction:column;gap:16px;padding:20px}
+.dhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.dhead h3{margin:4px 0 8px;font-family:var(--f-num);font-weight:600;font-size:24px;line-height:1.15;overflow-wrap:anywhere}
+.x{font:inherit;font-weight:700;background:var(--teal-soft);color:var(--teal);border:none;border-radius:999px;width:36px;height:36px;cursor:pointer;flex:none}
+.kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:480px){.kv{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kv div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 11px;min-width:0}
+.kv span{display:block;font-size:11px;color:var(--muted)}
+.kv b{font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.mem{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.mtop{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.mtop small{color:var(--muted)}
+.mcaj{font-weight:700;color:var(--teal);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:11px;border-radius:6px;padding:2px 7px;border:1px solid var(--line);color:var(--muted)}
+.tag.y{background:var(--teal-soft);border-color:transparent;color:var(--teal);font-weight:700}
+.skel{color:transparent!important;background:var(--line);border-radius:8px;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.5}}
+@media (prefers-reduced-motion:reduce){.skel{animation:none}.fill{transition:none}}
+.lp-head{display:flex;flex-direction:column;gap:10px;position:sticky;top:0;background:var(--bg);padding-bottom:8px;z-index:2}
+.lp-sum{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.lp-sum b{color:var(--ink);font-variant-numeric:tabular-nums}
+.lrow{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);cursor:pointer;user-select:none}
+.lrow + .lrow{margin-top:6px}
+.lrow.done{background:var(--mc-soft,var(--teal-soft));border-color:transparent}
+.lrow input{width:22px;height:22px;accent-color:var(--mc,var(--teal));flex:none;cursor:pointer}
+.lrow .who{min-width:0;flex:1;display:flex;flex-direction:column}
+.lrow .who b{overflow-wrap:anywhere;font-weight:600}
+.lrow .who small{color:var(--muted);font-size:12px}
+.lrow.g .who b{font-weight:800}
+.tick-in{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
+.tick-in input{width:18px;height:18px;accent-color:var(--teal)}
+.payedit{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.payedit input{font:inherit;width:150px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-variant-numeric:tabular-nums}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-line{background:transparent;color:var(--teal);border-color:var(--line)}
+.msg{font-size:13px;color:var(--muted)}
+.msg.err{color:var(--bad)}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;z-index:50;max-width:calc(100vw - 32px)}
+</style>
+
+<header class="hero">
+  <div class="hero-in">
+    <p class="eyebrow">SASera · Family Day 2026</p>
+    <h1>Family Day SASera</h1>
+    <p class="lede" id="lede">Memuatkan data…</p>
+    <div class="hero-bar">
+      <button class="btn btn-glass" id="refresh" type="button">↻ Muat semula</button>
+      <span class="stamp" id="stamp"></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="kpis" id="kpis" aria-label="Ringkasan">
+    <div class="kpi hl"><span>Guru sertai</span><strong id="k-guru" class="skel">00</strong></div>
+    <div class="kpi"><span>Ahli keluarga</span><strong id="k-kel" class="skel">00</strong></div>
+    <div class="kpi hl"><span>Jumlah peserta</span><strong id="k-all" class="skel">00</strong></div>
+    <div class="kpi money"><span>Caj tambahan</span><strong id="k-caj" class="skel">RM 0</strong></div>
+    <div class="kpi money"><span>Diterima</span><strong id="k-terima" class="skel">RM 0</strong></div>
+    <div class="kpi money due"><span>Baki</span><strong id="k-baki" class="skel">RM 0</strong></div>
+  </section>
+
+  <div class="notice" id="notice" hidden></div>
+
+  <section class="sec" id="senarai">
+    <div class="sec-head"><h2>Senarai &amp; tick</h2><p class="hint">Tekan senarai untuk lihat nama</p></div>
+    <div class="lists" id="lists"></div>
+  </section>
+
+  <section class="sec" id="bayaran">
+    <div class="sec-head"><h2>Bayaran</h2><p class="hint">Bayaran dikemas kini dalam Google Sheet</p></div>
+    <div class="pay">
+      <div class="panel statrow" id="paysum"></div>
+      <div class="panel">
+        <div class="chips" id="paychips" role="group" aria-label="Tapis bayaran">
+          <button class="chip" type="button" data-p="Belum lunas" aria-pressed="true">Belum lunas</button>
+          <button class="chip" type="button" data-p="Perlu pulangan" aria-pressed="false">Perlu pulangan</button>
+          <button class="chip" type="button" data-p="Lunas" aria-pressed="false">Lunas</button>
+          <button class="chip" type="button" data-p="caj" aria-pressed="false">Semua ada caj</button>
+        </div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Nama</th><th class="r">Caj</th><th class="r">Diterima</th><th class="r">Baki</th><th>Status</th></tr></thead>
+            <tbody id="paytable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="guru">
+    <div class="sec-head"><h2>Guru &amp; ahli</h2><p class="count" id="count"></p></div>
+    <div class="toolbar">
+      <input id="q" class="search" type="search" placeholder="Cari nama guru atau ahli keluarga…" aria-label="Cari nama" autocomplete="off">
+      <div class="chips" id="filters" role="group" aria-label="Penapis">
+        <button class="chip" type="button" data-f="semua" aria-pressed="true">Semua</button>
+        <button class="chip" type="button" data-f="sertai" aria-pressed="false">Sertai</button>
+        <button class="chip" type="button" data-f="tidak" aria-pressed="false">Tidak sertai</button>
+        <button class="chip" type="button" data-f="belum" aria-pressed="false">Belum lunas</button>
+        <button class="chip" type="button" data-f="bas" aria-pressed="false">Naik bas</button>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+
+<dialog id="dlg" aria-label="Butiran guru"><div class="dlg" id="dlgbody"></div></dialog>
+
+<dialog id="lst" aria-label="Senarai"><div class="dlg" id="lstbody"></div></dialog>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+  // Data dibaca terus (live) daripada Google Sheet yang dikongsi melalui pautan.
+  const SHEET_ID = '1pUA7AF4eDqta05WojsRbBP4SVbL-2KVXEGEgwUVMPwI';
+  const REFRESH_MS = 60000;
+  const LISTS = [
+    {key: 'bas', sheet: 'List Bas', label: 'Bas', tick: 'Naik', color: 'var(--teal)', soft: 'var(--teal-soft)'},
+    {key: 'tour', sheet: 'List Pink Tour', label: 'Pink Tour', tick: 'Hadir', color: 'var(--pink)', soft: 'var(--pink-soft)'},
+    {key: 'vjh', sheet: 'List Van Jeti ke Hotel', label: 'Van Jeti → Hotel', tick: 'Naik', color: '#2563eb', soft: 'color-mix(in srgb,#2563eb 14%,transparent)'},
+    {key: 'vhj', sheet: 'List Van Hotel ke Jeti', label: 'Van Hotel → Jeti', tick: 'Naik', color: '#ea580c', soft: 'color-mix(in srgb,#ea580c 14%,transparent)'},
+    {key: 'tea', sheet: 'List Hi Tea', label: 'Hi Tea', tick: 'Hadir', color: '#7c3aed', soft: 'color-mix(in srgb,#7c3aed 14%,transparent)'}
+  ];
+  const state = {guru: null, fam: [], lists: {}, missing: {}, err: null, f: 'semua', q: '', pay: 'Belum lunas', openGuru: null, openList: null, lq: '', lsort: false, stamp: null};
+  const $ = (id) => document.getElementById(id);
+
+  // ---------- helpers ----------
+  const s = (x) => String(x ?? '').trim();
+  const n = (x) => { const t = String(x ?? '').replace(/[^0-9.\-]/g, ''); const y = parseFloat(t); return isFinite(y) ? y : 0; };
+  const yes = (x) => /^(true|ya|yes|1|✓)$/i.test(s(x));
+  const rm = (x) => (n(x) < 0 ? '-' : '') + 'RM ' + Math.abs(n(x)).toLocaleString('en-MY', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  const h = (tag, attrs, ...kids) => {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v == null || v === false) continue;
+      if (k === 'class') e.className = v; else if (k === 'style') e.setAttribute('style', v);
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v === true ? '' : v);
+    }
+    for (const c of kids.flat()) { if (c == null || c === false) continue; e.append(c.nodeType ? c : document.createTextNode(String(c))); }
+    return e;
+  };
+  const stCls = (st) => ({'Lunas': 'p-lunas', 'Belum lunas': 'p-belum', 'Perlu pulangan': 'p-pulang', 'Tiada caj': 'p-tiada', 'Tidak sertai': 'p-tidak'})[st] || 'p-tiada';
+  const groups = (list) => {
+    const g = {dewasa: 0, kanak: 0, bayi: 0};
+    for (const r of list) { const k = s(r.kat).toLowerCase(); if (k.startsWith('kanak')) g.kanak++; else if (k.startsWith('baby') || k.startsWith('bayi')) g.bayi++; else g.dewasa++; }
+    return g;
+  };
+  const groupText = (g) => 'Dewasa ' + g.dewasa + ' · Kanak-kanak ' + g.kanak + (g.bayi ? ' · Bayi ' + g.bayi : '');
+
+  function parseCSV(text) {
+    const rows = []; let row = [], cell = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
+      else if (c === '"') q = true;
+      else if (c === ',') { row.push(cell); cell = ''; }
+      else if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+      else if (c !== '\r') cell += c;
+    }
+    if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+    return rows;
+  }
+  async function readRange(sheet, range) {
+    const url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&headers=0&sheet=' + encodeURIComponent(sheet) + '&range=' + range + '&t=' + Date.now();
+    const res = await fetch(url, {cache: 'no-store'});
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    if (/^\s*</.test(text)) throw new Error('not_csv');
+    return parseCSV(text);
+  }
+
+  // ---------- load ----------
+  async function load() {
+    try {
+      const [g, f, ...ls] = await Promise.all([
+        readRange('Checklist akhir', 'A16:N200'),
+        readRange('Checklist akhir', 'A68:L400'),
+        ...LISTS.map((l) => readRange(l.sheet, 'A4:G400').catch(() => null))
+      ]);
+      const gEnd = g.findIndex((r) => !/^\d+$/.test(s(r[0])));
+      state.guru = (gEnd < 0 ? g : g.slice(0, gEnd)).filter((r) => s(r[1])).map((r) => ({
+        bil: s(r[0]), nama: s(r[1]), sertai: s(r[2]) === 'Ya', bilik: s(r[7]), caj: n(r[8]), terima: n(r[9]), baki: n(r[10]), status: s(r[11]) || (s(r[2]) === 'Ya' ? 'Tiada caj' : 'Tidak sertai')
+      }));
+      const fEnd = f.findIndex((r) => !/^\d+$/.test(s(r[0])));
+      state.fam = (fEnd < 0 ? f : f.slice(0, fEnd)).filter((r) => s(r[1]) && s(r[2])).map((r) => ({
+        guru: s(r[1]), nama: s(r[2]), full: s(r[2]) + ' (' + s(r[1]) + ')', kat: s(r[3]), umur: s(r[4]), tour: s(r[5]), makan: s(r[6]), van: s(r[7]), caj: n(r[9])
+      }));
+      LISTS.forEach((l, i) => {
+        const rows = ls[i];
+        // Tab yang tiada akan memulangkan tab pertama: sahkan tajuk lajur dulu.
+        if (!rows || !rows.length || s(rows[0][0]).toLowerCase() !== 'bil' || s(rows[0][2]).toLowerCase() !== 'nama peserta') { state.missing[l.key] = true; state.lists[l.key] = []; return; }
+        delete state.missing[l.key];
+        state.lists[l.key] = rows.slice(1).filter((r) => s(r[2])).map((r) => ({bil: s(r[0]), done: yes(r[1]), full: s(r[2]), guru: s(r[3]), kat: s(r[4]), umur: s(r[5]), bilik: s(r[6])}));
+      });
+      state.err = null; state.stamp = Date.now();
+    } catch (e) {
+      state.err = e && e.message === 'not_csv' ? 'access' : 'network';
+    }
+    render();
+  }
+
+  // ---------- model ----------
+  function people() {
+    if (!state.guru) return null;
+    const idx = {};
+    for (const l of LISTS) { const m = new Map(); for (const r of state.lists[l.key] || []) m.set(r.full, r); idx[l.key] = m; }
+    return state.guru.map((g) => {
+      const fam = state.fam.filter((m) => m.guru === g.nama);
+      const self = {full: g.nama, nama: g.nama, kat: 'Guru/ahli', isGuru: true};
+      const ahli = g.sertai ? [self, ...fam] : [];
+      for (const m of ahli) { m.in = {}; m.done = {}; for (const l of LISTS) { const r = idx[l.key].get(m.full); m.in[l.key] = !!r; m.done[l.key] = !!(r && r.done); } }
+      self.tour = self.in && self.in.tour ? 'Ya' : 'Tidak';
+      self.makan = self.in && self.in.tea ? 'Ya' : 'Tidak';
+      return {...g, ahli, fam, self};
+    });
+  }
+
+  // ---------- render ----------
+  function render() {
+    renderNotice();
+    const P = people(); if (!P) return;
+    const ikut = P.filter((p) => p.sertai);
+    const kelN = ikut.reduce((a, p) => a + p.fam.length, 0);
+    const set = (id, txt) => { const e = $(id); e.textContent = txt; e.classList.remove('skel'); };
+    set('k-guru', ikut.length); set('k-kel', kelN); set('k-all', ikut.length + kelN);
+    set('k-caj', rm(P.reduce((a, p) => a + p.caj, 0))); set('k-terima', rm(P.reduce((a, p) => a + p.terima, 0)));
+    set('k-baki', rm(P.reduce((a, p) => a + Math.max(0, p.baki), 0)));
+    const belum = P.filter((p) => p.status === 'Belum lunas');
+    const basDone = (state.lists.bas || []).filter((r) => r.done).length;
+    $('lede').replaceChildren(...[
+      h('b', {}, String(ikut.length)), ' guru dan ', h('b', {}, String(kelN)), ' ahli keluarga menyertai Family Day. ',
+      state.missing.bas ? '' : [h('b', {}, String(basDone)), ' orang sudah ditanda naik bas. '],
+      belum.length ? [h('b', {}, String(belum.length)), ' guru belum lunas, baki ', h('b', {}, rm(belum.reduce((a, p) => a + p.baki, 0))), '.'] : 'Semua bayaran sudah lunas.'
+    ].flat());
+    $('stamp').textContent = state.stamp ? 'Live dari Google Sheet · ' + new Date(state.stamp).toLocaleTimeString('ms-MY', {hour: '2-digit', minute: '2-digit'}) : '';
+    renderLists(); renderPay(P); renderGrid(P);
+    if (state.openGuru && $('dlg').open) renderDetail(P.find((p) => p.bil === state.openGuru));
+    if (state.openList && $('lst').open) renderListPanel();
+  }
+
+  function renderLists() {
+    $('lists').replaceChildren(...LISTS.map((l) => {
+      const all = state.lists[l.key] || [], done = all.filter((r) => r.done).length, tot = all.length;
+      const pct = tot ? Math.round(done / tot * 100) : 0;
+      if (state.missing[l.key]) return h('div', {class: 'lcard'}, h('span', {class: 'ln'}, l.label, h('span', {class: 'dot', style: 'background:' + l.color})), h('span', {class: 'lfoot'}, 'Tab "' + l.sheet + '" belum ada dalam Google Sheet.'));
+      return h('button', {type: 'button', class: 'lcard', onclick: () => openList(l.key)},
+        h('span', {class: 'ln'}, l.label, h('span', {class: 'dot', style: 'background:' + l.color})),
+        h('span', {class: 'lv'}, String(done), h('small', {}, ' / ' + tot + ' ' + l.tick.toLowerCase())),
+        h('span', {class: 'track'}, h('span', {class: 'fill', style: '--c:' + l.color + ';width:' + pct + '%'})),
+        h('span', {class: 'lfoot', style: 'color:var(--ink);font-weight:600'}, groupText(groups(all))),
+        h('span', {class: 'lfoot'}, (tot - done) + ' belum tick · ' + pct + '%'));
+    }));
+  }
+
+  function renderPay(P) {
+    const order = [['Lunas', 'var(--ok)'], ['Belum lunas', 'var(--bad)'], ['Perlu pulangan', 'var(--warn)'], ['Tiada caj', 'var(--teal)']];
+    const ikut = P.filter((p) => p.sertai);
+    const cnt = Object.fromEntries(order.map(([k]) => [k, ikut.filter((p) => p.status === k).length]));
+    const tot = ikut.length || 1;
+    $('paysum').replaceChildren(
+      h('div', {class: 'sbar', role: 'img', 'aria-label': 'Pecahan status bayaran guru yang sertai'}, order.map(([k, c]) => h('i', {style: 'background:' + c + ';width:' + (cnt[k] / tot * 100) + '%'}))),
+      h('div', {class: 'legend'}, order.flatMap(([k, c]) => [h('span', {class: 'dot', style: 'background:' + c}), h('span', {}, k), h('span', {class: 'n'}, String(cnt[k]))])),
+      h('div', {class: 'moneyline'}, h('span', {}, 'Belum dibayar'), h('b', {style: 'color:var(--bad)'}, rm(P.reduce((a, p) => a + Math.max(0, p.baki), 0)))),
+      h('div', {class: 'moneyline'}, h('span', {}, 'Perlu dipulangkan'), h('b', {style: 'color:var(--warn)'}, rm(P.reduce((a, p) => a + Math.max(0, -p.baki), 0))))
+    );
+    const rows = P.filter((p) => state.pay === 'caj' ? p.caj > 0 : p.status === state.pay);
+    $('paytable').replaceChildren(...(rows.length ? rows.map((p) => h('tr', {tabindex: '0', onclick: () => openDetail(p.bil), onkeydown: (e) => { if (e.key === 'Enter') openDetail(p.bil); }},
+      h('td', {}, p.nama), h('td', {class: 'r'}, rm(p.caj)), h('td', {class: 'r'}, rm(p.terima)),
+      h('td', {class: 'r', style: p.baki > 0 ? 'color:var(--bad);font-weight:700' : (p.baki < 0 ? 'color:var(--warn);font-weight:700' : '')}, rm(p.baki)),
+      h('td', {}, h('span', {class: 'pill ' + stCls(p.status)}, p.status)))) : [h('tr', {}, h('td', {colspan: '5', style: 'color:var(--muted)'}, 'Tiada nama dalam kategori ini.'))]));
+  }
+
+  function matches(p) {
+    const q = state.q;
+    if (q && !p.nama.toLowerCase().includes(q) && !p.fam.some((m) => m.nama.toLowerCase().includes(q))) return false;
+    switch (state.f) {
+      case 'sertai': return p.sertai;
+      case 'tidak': return !p.sertai;
+      case 'belum': return p.status === 'Belum lunas';
+      case 'bas': return p.ahli.some((m) => m.done.bas);
+      default: return true;
+    }
+  }
+
+  function renderGrid(P) {
+    const shown = P.filter(matches);
+    $('count').textContent = shown.length + ' daripada ' + P.length + ' guru';
+    $('grid').replaceChildren(...(shown.length ? shown.map((p) => h('button', {type: 'button', class: 'card' + (p.sertai ? '' : ' off'), onclick: () => openDetail(p.bil), 'aria-label': 'Butiran ' + p.nama},
+      h('span', {class: 'ctop'}, h('span', {class: 'cnum'}, '#' + p.bil), h('span', {class: 'pill ' + stCls(p.status)}, p.status)),
+      h('span', {class: 'cname'}, p.nama),
+      h('span', {class: 'cmeta'}, p.sertai && p.bilik ? h('span', {class: 'room'}, p.bilik) : null, p.sertai ? (p.fam.length ? '+' + p.fam.length + ' keluarga' : 'Seorang') : 'Tidak sertai'),
+      p.sertai ? h('span', {class: 'marks'}, LISTS.map((l) => {
+        const inside = p.ahli.filter((m) => m.in[l.key]);
+        if (!inside.length) return null;
+        const done = inside.filter((m) => m.done[l.key]).length;
+        return h('span', {class: 'mk' + (done ? ' on' : ''), style: '--mc:' + l.color + ';--mc-soft:' + l.soft}, (done === inside.length ? '✓ ' : '') + l.label + (inside.length > 1 ? ' ' + done + '/' + inside.length : ''));
+      })) : null)) : [h('p', {class: 'empty'}, state.f === 'bas' ? 'Belum ada sesiapa ditanda naik bas.' : 'Tiada nama yang sepadan.')]));
+  }
+
+  function openDetail(bil) {
+    state.openGuru = bil;
+    renderDetail(people().find((p) => p.bil === bil));
+    const d = $('dlg'); if (!d.open) { try { d.showModal(); } catch { d.setAttribute('open', ''); } }
+  }
+  function renderDetail(p) {
+    if (!p) return;
+    const kv = (k, v) => h('div', {}, h('span', {}, k), h('b', {}, v || '—'));
+    const yn = (k, v) => h('span', {class: 'tag' + (s(v).startsWith('Ya') ? ' y' : '')}, k + ': ' + (s(v) || '—'));
+    const ticks = (m) => h('div', {class: 'tags'}, LISTS.filter((l) => m.in[l.key]).map((l) => h('span', {class: 'tag' + (m.done[l.key] ? ' y' : '')}, (m.done[l.key] ? '✓ ' : '○ ') + l.label)));
+    const body = [h('div', {class: 'dhead'},
+      h('div', {}, h('span', {class: 'cnum'}, '#' + p.bil), h('h3', {}, p.nama),
+        h('span', {class: 'cmeta'}, h('span', {class: 'pill ' + (p.sertai ? 'p-tiada' : 'p-tidak')}, p.sertai ? 'Sertai' : 'Tidak sertai'), h('span', {class: 'pill ' + stCls(p.status)}, p.status))),
+      h('button', {type: 'button', class: 'x', 'aria-label': 'Tutup', onclick: () => $('dlg').close()}, '✕'))];
+    if (p.sertai) {
+      body.push(h('div', {class: 'kv'}, kv('Pink Tour', p.self.tour), kv('Hi Tea', p.self.makan), kv('Bilik', p.bilik), kv('Ahli keluarga', String(p.fam.length)), kv('Jumlah', (p.fam.length + 1) + ' orang'), kv('Van', p.self.in.vhj ? 'Ya' : 'Tidak')));
+      body.push(h('h2', {}, 'Senarai guru'), ticks(p.self));
+      body.push(h('h2', {}, 'Bayaran'), h('div', {class: 'kv'}, kv('Caj tambahan', rm(p.caj)), kv('Diterima', rm(p.terima)), kv('Baki', rm(p.baki))));
+      body.push(h('h2', {}, 'Ahli keluarga (' + p.fam.length + ')'));
+      if (!p.fam.length) body.push(h('p', {class: 'hint'}, 'Tiada ahli keluarga didaftarkan.'));
+      for (const m of p.fam) body.push(h('div', {class: 'mem'},
+        h('div', {class: 'mtop'}, h('span', {}, h('b', {}, m.nama), h('small', {}, ' · ' + m.kat + (m.umur ? ', ' + m.umur + ' thn' : ''))), h('span', {class: 'mcaj'}, rm(m.caj))),
+        h('div', {class: 'tags'}, yn('Tour', m.tour), yn('Makanan', m.makan), yn('Van', m.van)),
+        ticks(m)));
+    } else body.push(h('p', {class: 'hint'}, 'Guru ini tidak menyertai Family Day.'));
+    $('dlgbody').replaceChildren(...body);
+  }
+
+  function openList(key) {
+    state.openList = key; state.lq = '';
+    renderListPanel();
+    const d = $('lst'); if (!d.open) { try { d.showModal(); } catch { d.setAttribute('open', ''); } }
+  }
+  function renderListPanel() {
+    const l = LISTS.find((x) => x.key === state.openList); if (!l) return;
+    const all = state.lists[l.key] || [], done = all.filter((r) => r.done).length;
+    let rows = all.filter((r) => !state.lq || r.full.toLowerCase().includes(state.lq));
+    if (state.lsort) rows = [...rows].sort((a, b) => Number(b.done) - Number(a.done));
+    const keepFocus = document.activeElement && document.activeElement.id === 'lq';
+    const g = groups(all);
+    const head = h('div', {class: 'lp-head'},
+      h('div', {class: 'dhead'}, h('div', {}, h('span', {class: 'cnum'}, 'Senarai'), h('h3', {style: 'color:' + l.color}, l.label)),
+        h('button', {type: 'button', class: 'x', 'aria-label': 'Tutup', onclick: () => $('lst').close()}, '✕')),
+      h('div', {class: 'lp-sum'}, h('span', {}, 'Sudah ' + l.tick.toLowerCase() + ': ', h('b', {}, String(done))), h('span', {}, 'Belum: ', h('b', {}, String(all.length - done))), h('span', {}, 'Jumlah: ', h('b', {}, String(all.length)))),
+      h('div', {class: 'lp-sum'}, h('span', {}, 'Dewasa: ', h('b', {}, String(g.dewasa))), h('span', {}, 'Kanak-kanak: ', h('b', {}, String(g.kanak))), g.bayi ? h('span', {}, 'Bayi: ', h('b', {}, String(g.bayi))) : null, h('span', {class: 'hint'}, '(guru dikira dewasa)')),
+      h('div', {class: 'track'}, h('span', {class: 'fill', style: '--c:' + l.color + ';width:' + (all.length ? done / all.length * 100 : 0) + '%'})),
+      h('div', {class: 'toolbar'},
+        h('input', {id: 'lq', class: 'search', type: 'search', placeholder: 'Cari nama…', value: state.lq, 'aria-label': 'Cari dalam senarai', autocomplete: 'off', oninput: (e) => { state.lq = e.target.value.trim().toLowerCase(); renderListPanel(); }}),
+        h('button', {type: 'button', class: 'chip', 'aria-pressed': state.lsort ? 'true' : 'false', onclick: () => { state.lsort = !state.lsort; renderListPanel(); }}, 'Bertick di atas')));
+    const list = h('div', {}, rows.length ? rows.map((r) => {
+      const isGuru = s(r.kat) === 'Guru/ahli';
+      return h('div', {class: 'lrow' + (r.done ? ' done' : '') + (isGuru ? ' g' : ''), style: '--mc:' + l.color + ';--mc-soft:' + l.soft},
+        h('span', {style: 'font-size:18px;width:22px;text-align:center;color:' + (r.done ? l.color : 'var(--muted)')}, r.done ? '✓' : '○'),
+        h('span', {class: 'who'}, h('b', {}, r.full), h('small', {}, (isGuru ? 'Guru/ahli' : r.kat + (r.umur ? ', ' + r.umur + ' thn' : '')) + ' · ' + (r.bilik || '—'))));
+    }) : h('p', {class: 'empty'}, 'Tiada nama yang sepadan.'));
+    $('lstbody').replaceChildren(head, list);
+    if (keepFocus) { const i = $('lq'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }
+  }
+
+  function renderNotice() {
+    const box = $('notice');
+    const miss = LISTS.filter((l) => state.missing[l.key]).map((l) => l.sheet);
+    const msg = state.err === 'access' ? 'Google Sheet tidak dapat dibaca. Pastikan sheet dikongsi sebagai "Sesiapa yang ada pautan boleh melihat".'
+      : state.err === 'network' ? 'Tidak dapat menyambung ke Google Sheet. Semak internet dan tekan Muat semula.'
+      : miss.length ? 'Tab ' + miss.join(', ') + ' belum ada dalam Google Sheet, jadi senarai itu belum dipaparkan.' : null;
+    if (!msg) { box.hidden = true; return; }
+    box.replaceChildren(h('b', {}, 'Perhatian: '), msg); box.hidden = false;
+  }
+
+  // ---------- controls ----------
+  for (const b of document.querySelectorAll('#filters .chip')) b.addEventListener('click', () => {
+    state.f = b.dataset.f; for (const x of document.querySelectorAll('#filters .chip')) x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); render();
+  });
+  for (const b of document.querySelectorAll('#paychips .chip')) b.addEventListener('click', () => {
+    state.pay = b.dataset.p; for (const x of document.querySelectorAll('#paychips .chip')) x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); render();
+  });
+  $('q').addEventListener('input', (e) => { state.q = e.target.value.trim().toLowerCase(); render(); });
+  for (const id of ['dlg', 'lst']) $(id).addEventListener('click', (e) => { if (e.target === $(id)) $(id).close(); });
+  $('dlg').addEventListener('close', () => { state.openGuru = null; });
+  $('lst').addEventListener('close', () => { state.openList = null; });
+  $('refresh').addEventListener('click', () => load());
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) load(); });
+
+  $('lists').replaceChildren(...LISTS.map((l) => h('div', {class: 'lcard'}, h('span', {class: 'ln'}, l.label, h('span', {class: 'dot', style: 'background:' + l.color})), h('span', {class: 'lv skel'}, '00 / 00'), h('span', {class: 'track'}))));
+  $('grid').replaceChildren(h('p', {class: 'empty'}, 'Memuatkan senarai guru…'));
+  load();
+  setInterval(() => { if (!document.hidden) load(); }, REFRESH_MS);
+})();
+</script>
+</body>
+</html>
