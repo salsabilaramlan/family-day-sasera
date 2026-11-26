@@ -126,6 +126,11 @@ dialog::backdrop{background:rgba(4,30,28,.5)}
 .kv div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 11px;min-width:0}
 .kv span{display:block;font-size:11px;color:var(--muted)}
 .kv b{font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.bands{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:520px){.bands{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.band{background:var(--teal-soft);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.band span{font-size:13px;font-weight:600}.band strong{font-size:clamp(22px,5vw,30px);line-height:1.1}.band small{color:var(--muted);font-size:12px}
+.yh{font-size:15px;margin:16px 0 8px}
 .mem{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
 .mtop{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .mtop small{color:var(--muted)}
@@ -187,6 +192,11 @@ dialog::backdrop{background:rgba(4,30,28,.5)}
     <div class="lists" id="lists"></div>
   </section>
 
+  <section class="sec" id="umur">
+    <div class="sec-head"><h2>Ikut umur</h2><p class="hint">Semua peserta yang sertai</p></div>
+    <div class="panel"><div class="bands" id="bands"></div><div id="young"></div></div>
+  </section>
+
   <section class="sec" id="bayaran">
     <div class="sec-head"><h2>Bayaran</h2><p class="hint">Bayaran dikemas kini dalam Google Sheet</p></div>
     <div class="pay">
@@ -241,6 +251,8 @@ dialog::backdrop{background:rgba(4,30,28,.5)}
     {key: 'vhj', sheet: 'List Van Hotel ke Jeti', label: 'Van Hotel → Jeti', tick: 'Naik', color: '#ea580c', soft: 'color-mix(in srgb,#ea580c 14%,transparent)'},
     {key: 'tea', sheet: 'List Hi Tea', label: 'Hi Tea', tick: 'Hadir', color: '#7c3aed', soft: 'color-mix(in srgb,#7c3aed 14%,transparent)'}
   ];
+  // Umur (tahun) dikira daripada No. IC pada 26 Nov 2026. No. IC tidak disimpan dalam laman ini.
+  const AGE = {"Dewasa 1 (YII YUNG HUONG)": 46, "Dewasa 2 (YII YUNG HUONG)": 16, "Dewasa 3 (YII YUNG HUONG)": 14, "Kanak-kanak 1 (YII YUNG HUONG)": 11, "Dewasa 1 (OKU) (NORZALIANA BINTI MAT NURI)": 16, "Kanak-kanak 2 (NORZALIANA BINTI MAT NURI)": 12, "Kanak-kanak 1 (NORZALIANA BINTI MAT NURI)": 7, "Dewasa 1 (ADAM AZHARI BIN MUHAMAD SUBRI)": 31, "Kanak-kanak 1 (ADAM AZHARI BIN MUHAMAD SUBRI)": 7, "Kanak-kanak 2 (ADAM AZHARI BIN MUHAMAD SUBRI)": 5, "Kanak-kanak 3 (ADAM AZHARI BIN MUHAMAD SUBRI)": 2, "ADAM AZHARI BIN MUHAMAD SUBRI": 31, "AHMAD FUAD BIN ABU BAKAR": 45, "AHMAD HANAFI BIN ABDUL ALIM": 28, "AINUR RUZAINAH BINTI ABDULLAH": 28, "AZIZAH BT ABDUL WAHAB@ALI": 49, "INTAN NORSYAFIQAH BINTI ZAHID": 28, "MARLIA BINTI MOHAMED": 46, "MOHD KHOMEINI BIN CHE OMAR": 37, "MOHD MASRAN BIN ABDUL MAJID": 45, "MOHD YUSOFF BIN MOHD NASIR": 50, "MUHAMAD SYAHIRAN BIN MAT SIDEK": 29, "NAZIRA BINTI RAMLI": 37, "NOOR HAYATI BINTI MAT ABDULLAH": 48, "NORALIA BINTI SULAIMAN": 34, "NORDIANA": 42, "NORZALIANA BINTI MAT NURI": 45, "NUR AIN BINTI HUSNI": 35, "NUR FAHIMAH BINTI FAUZI": 30, "NUR FARINI BINTI MD MARZUKI": 43, "NUR SHAHIRA AINA": 25, "NUR SYAZA BINTI ISAMUDIN": 26, "NURASYIKIN BINTI NORIZAN": 31, "NURUL ASFINAH BINTI RUSLAN": 32, "NURUL IZZATI MU’AFAH BINTI KHALID": 29, "NURUL LYIANA BINTI JAMALUDDIN": 38, "RAFIDAH IBRAHIM": 44, "ROSNANI BINTI MOHAMED ARUS": 57, "SADATUL NAZIRAH BT ABD HAMID": 40, "SAL SABILA BINTI RAMLAN": 37, "SITI HAJAR BINTI ABDULLAH": 28, "SITI HIDAYAH BINTI HIDI": 36, "SITI NASMASYURAH": 34, "SITI ROKIAH BINTI OTHMAN": 35, "YII YUNG HUONG": 47, "YUSLAINI SAPARIMIN @ YUKIRIN": 42, "ZUHANA BINTI MUKRIM": 55, "ZULHANIF BIN AHMAD RODZI": 41, "ZURIYATI BINTI DOLLAH": 54, "TENGKU HAJAR BINTI TENGKU ABD RASHID": 24, "AYAT HUMAIRA BINTI AZMAN": 23, "SITI ZULAIKHA BT ADNAN": 28, "Kanak-kanak 1 (NURUL LYIANA BINTI JAMALUDDIN)": 7};
   const state = {guru: null, fam: [], lists: {}, missing: {}, err: null, f: 'semua', q: '', pay: 'Belum lunas', openGuru: null, openList: null, lq: '', lsort: false, stamp: null};
   const $ = (id) => document.getElementById(id);
 
@@ -260,12 +272,16 @@ dialog::backdrop{background:rgba(4,30,28,.5)}
     return e;
   };
   const stCls = (st) => ({'Lunas': 'p-lunas', 'Belum lunas': 'p-belum', 'Perlu pulangan': 'p-pulang', 'Tiada caj': 'p-tiada', 'Tidak sertai': 'p-tidak'})[st] || 'p-tiada';
-  const groups = (list) => {
-    const g = {dewasa: 0, kanak: 0, bayi: 0};
-    for (const r of list) { const k = s(r.kat).toLowerCase(); if (k.startsWith('kanak')) g.kanak++; else if (k.startsWith('baby') || k.startsWith('bayi')) g.bayi++; else g.dewasa++; }
-    return g;
+  const ageOf = (full, umur) => AGE[full] != null ? AGE[full] : (s(umur) ? n(umur) : null);
+  const BANDS = [['bayi', 'Bayi', '0–2 thn'], ['kanak', 'Kanak-kanak', '3–12 thn'], ['remaja', 'Remaja', '13–17 thn'], ['dewasa', 'Dewasa', '18 thn ke atas']];
+  const band = (r) => {
+    const a = ageOf(r.full, r.umur);
+    if (a != null) return a <= 2 ? 'bayi' : a <= 12 ? 'kanak' : a <= 17 ? 'remaja' : 'dewasa';
+    const k = s(r.kat).toLowerCase(); return k.startsWith('kanak') ? 'kanak' : (k.startsWith('baby') || k.startsWith('bayi')) ? 'bayi' : 'dewasa';
   };
-  const groupText = (g) => 'Dewasa ' + g.dewasa + ' · Kanak-kanak ' + g.kanak + (g.bayi ? ' · Bayi ' + g.bayi : '');
+  const groups = (list) => { const g = {dewasa: 0, remaja: 0, kanak: 0, bayi: 0}; for (const r of list) g[band(r)]++; return g; };
+  const groupText = (g) => 'Dewasa ' + g.dewasa + (g.remaja ? ' · Remaja ' + g.remaja : '') + ' · Kanak-kanak ' + g.kanak + (g.bayi ? ' · Bayi ' + g.bayi : '');
+  const thn = (a) => a == null ? '' : a + ' thn';
 
   function parseCSV(text) {
     const rows = []; let row = [], cell = '', q = false;
@@ -353,7 +369,7 @@ dialog::backdrop{background:rgba(4,30,28,.5)}
       belum.length ? [h('b', {}, String(belum.length)), ' guru belum lunas, baki ', h('b', {}, rm(belum.reduce((a, p) => a + p.baki, 0))), '.'] : 'Semua bayaran sudah lunas.'
     ].flat());
     $('stamp').textContent = state.stamp ? 'Live dari Google Sheet · ' + new Date(state.stamp).toLocaleTimeString('ms-MY', {hour: '2-digit', minute: '2-digit'}) : '';
-    renderLists(); renderPay(P); renderGrid(P);
+    renderLists(); renderAge(P); renderPay(P); renderGrid(P);
     if (state.openGuru && $('dlg').open) renderDetail(P.find((p) => p.bil === state.openGuru));
     if (state.openList && $('lst').open) renderListPanel();
   }
@@ -370,6 +386,16 @@ dialog::backdrop{background:rgba(4,30,28,.5)}
         h('span', {class: 'lfoot', style: 'color:var(--ink);font-weight:600'}, groupText(groups(all))),
         h('span', {class: 'lfoot'}, (tot - done) + ' belum tick · ' + pct + '%'));
     }));
+  }
+
+  function renderAge(P) {
+    const all = P.filter((p) => p.sertai).flatMap((p) => p.ahli.map((m) => ({full: m.full, nama: m.nama, umur: m.umur, kat: m.kat, guru: p.nama, isGuru: !!m.isGuru})));
+    const g = groups(all);
+    $('bands').replaceChildren(...BANDS.map(([k, label, range]) => h('div', {class: 'band'}, h('span', {}, label), h('strong', {}, String(g[k])), h('small', {}, range))));
+    const young = all.filter((r) => band(r) !== 'dewasa').map((r) => ({...r, a: ageOf(r.full, r.umur)})).sort((x, y) => (x.a ?? 99) - (y.a ?? 99) || x.guru.localeCompare(y.guru));
+    $('young').replaceChildren(h('h3', {class: 'yh'}, 'Bawah 18 tahun (' + young.length + ' orang)'),
+      h('div', {class: 'tablewrap'}, h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Umur'), h('th', {}, 'Peserta'), h('th', {}, 'Keluarga (guru)'))),
+        h('tbody', {}, young.map((r) => h('tr', {}, h('td', {}, h('b', {}, r.a == null ? '—' : thn(r.a))), h('td', {}, r.nama), h('td', {}, r.guru)))))));
   }
 
   function renderPay(P) {
@@ -432,13 +458,13 @@ dialog::backdrop{background:rgba(4,30,28,.5)}
         h('span', {class: 'cmeta'}, h('span', {class: 'pill ' + (p.sertai ? 'p-tiada' : 'p-tidak')}, p.sertai ? 'Sertai' : 'Tidak sertai'), h('span', {class: 'pill ' + stCls(p.status)}, p.status))),
       h('button', {type: 'button', class: 'x', 'aria-label': 'Tutup', onclick: () => $('dlg').close()}, '✕'))];
     if (p.sertai) {
-      body.push(h('div', {class: 'kv'}, kv('Pink Tour', p.self.tour), kv('Hi Tea', p.self.makan), kv('Bilik', p.bilik), kv('Ahli keluarga', String(p.fam.length)), kv('Jumlah', (p.fam.length + 1) + ' orang'), kv('Van', p.self.in.vhj ? 'Ya' : 'Tidak')));
+      body.push(h('div', {class: 'kv'}, kv('Pink Tour', p.self.tour), kv('Hi Tea', p.self.makan), kv('Umur', thn(ageOf(p.nama))), kv('Bilik', p.bilik), kv('Ahli keluarga', String(p.fam.length)), kv('Jumlah', (p.fam.length + 1) + ' orang'), kv('Van', p.self.in.vhj ? 'Ya' : 'Tidak')));
       body.push(h('h2', {}, 'Senarai guru'), ticks(p.self));
       body.push(h('h2', {}, 'Bayaran'), h('div', {class: 'kv'}, kv('Caj tambahan', rm(p.caj)), kv('Diterima', rm(p.terima)), kv('Baki', rm(p.baki))));
       body.push(h('h2', {}, 'Ahli keluarga (' + p.fam.length + ')'));
       if (!p.fam.length) body.push(h('p', {class: 'hint'}, 'Tiada ahli keluarga didaftarkan.'));
       for (const m of p.fam) body.push(h('div', {class: 'mem'},
-        h('div', {class: 'mtop'}, h('span', {}, h('b', {}, m.nama), h('small', {}, ' · ' + m.kat + (m.umur ? ', ' + m.umur + ' thn' : ''))), h('span', {class: 'mcaj'}, rm(m.caj))),
+        h('div', {class: 'mtop'}, h('span', {}, h('b', {}, m.nama), h('small', {}, ' · ' + m.kat + (ageOf(m.full, m.umur) != null ? ', ' + thn(ageOf(m.full, m.umur)) : ''))), h('span', {class: 'mcaj'}, rm(m.caj))),
         h('div', {class: 'tags'}, yn('Tour', m.tour), yn('Makanan', m.makan), yn('Van', m.van)),
         ticks(m)));
     } else body.push(h('p', {class: 'hint'}, 'Guru ini tidak menyertai Family Day.'));
@@ -461,7 +487,7 @@ dialog::backdrop{background:rgba(4,30,28,.5)}
       h('div', {class: 'dhead'}, h('div', {}, h('span', {class: 'cnum'}, 'Senarai'), h('h3', {style: 'color:' + l.color}, l.label)),
         h('button', {type: 'button', class: 'x', 'aria-label': 'Tutup', onclick: () => $('lst').close()}, '✕')),
       h('div', {class: 'lp-sum'}, h('span', {}, 'Sudah ' + l.tick.toLowerCase() + ': ', h('b', {}, String(done))), h('span', {}, 'Belum: ', h('b', {}, String(all.length - done))), h('span', {}, 'Jumlah: ', h('b', {}, String(all.length)))),
-      h('div', {class: 'lp-sum'}, h('span', {}, 'Dewasa: ', h('b', {}, String(g.dewasa))), h('span', {}, 'Kanak-kanak: ', h('b', {}, String(g.kanak))), g.bayi ? h('span', {}, 'Bayi: ', h('b', {}, String(g.bayi))) : null, h('span', {class: 'hint'}, '(guru dikira dewasa)')),
+      h('div', {class: 'lp-sum'}, h('span', {}, 'Dewasa: ', h('b', {}, String(g.dewasa))), g.remaja ? h('span', {}, 'Remaja: ', h('b', {}, String(g.remaja))) : null, h('span', {}, 'Kanak-kanak: ', h('b', {}, String(g.kanak))), g.bayi ? h('span', {}, 'Bayi: ', h('b', {}, String(g.bayi))) : null, h('span', {class: 'hint'}, '(ikut umur)')),
       h('div', {class: 'track'}, h('span', {class: 'fill', style: '--c:' + l.color + ';width:' + (all.length ? done / all.length * 100 : 0) + '%'})),
       h('div', {class: 'toolbar'},
         h('input', {id: 'lq', class: 'search', type: 'search', placeholder: 'Cari nama…', value: state.lq, 'aria-label': 'Cari dalam senarai', autocomplete: 'off', oninput: (e) => { state.lq = e.target.value.trim().toLowerCase(); renderListPanel(); }}),
@@ -470,7 +496,7 @@ dialog::backdrop{background:rgba(4,30,28,.5)}
       const isGuru = s(r.kat) === 'Guru/ahli';
       return h('div', {class: 'lrow' + (r.done ? ' done' : '') + (isGuru ? ' g' : ''), style: '--mc:' + l.color + ';--mc-soft:' + l.soft},
         h('span', {style: 'font-size:18px;width:22px;text-align:center;color:' + (r.done ? l.color : 'var(--muted)')}, r.done ? '✓' : '○'),
-        h('span', {class: 'who'}, h('b', {}, r.full), h('small', {}, (isGuru ? 'Guru/ahli' : r.kat + (r.umur ? ', ' + r.umur + ' thn' : '')) + ' · ' + (r.bilik || '—'))));
+        h('span', {class: 'who'}, h('b', {}, r.full), h('small', {}, [isGuru ? 'Guru/ahli' : r.kat, thn(ageOf(r.full, r.umur)), r.bilik || '—'].filter(Boolean).join(' · '))));
     }) : h('p', {class: 'empty'}, 'Tiada nama yang sepadan.'));
     $('lstbody').replaceChildren(head, list);
     if (keepFocus) { const i = $('lq'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }
