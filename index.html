@@ -308,7 +308,7 @@ dialog::backdrop{background:rgba(4,30,28,.5)}
       LISTS.forEach((l, i) => {
         const rows = ls[i];
         // Tab yang tiada akan memulangkan tab pertama: sahkan tajuk lajur dulu.
-        if (!rows || !rows.length || s(rows[0][0]).toLowerCase() !== 'bil' || s(rows[0][2]).toLowerCase() !== 'nama peserta') { state.missing[l.key] = true; state.lists[l.key] = []; return; }
+        if (!rows || !rows.length || s(rows[0][2]).toLowerCase() !== 'nama peserta') { state.missing[l.key] = true; state.lists[l.key] = []; return; }
         delete state.missing[l.key];
         state.lists[l.key] = rows.slice(1).filter((r) => s(r[2])).map((r) => ({bil: s(r[0]), done: yes(r[1]), full: s(r[2]), guru: s(r[3]), kat: s(r[4]), umur: s(r[5]), bilik: s(r[6])}));
       });
